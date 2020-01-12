@@ -1,7 +1,36 @@
+// --------create grid-----------------------
+const NUM_OF_COLS = 100;
+const NUM_OF_ROWS = 60;
+
+const GRID_ID = 'grid';
+
+const getGrid = () => document.getElementById(GRID_ID);
+const getCellId = (colId, rowId) => colId + '_' + rowId;
+
+const getCell = (colId, rowId) =>
+  document.getElementById(getCellId(colId, rowId));
+
+const createCell = function (grid, colId, rowId) {
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.id = getCellId(colId, rowId);
+  grid.appendChild(cell);
+};
+
+const createGrids = function () {
+  const grid = getGrid();
+  for (let y = 0; y < NUM_OF_ROWS; y++) {
+    for (let x = 0; x < NUM_OF_COLS; x++) {
+      createCell(grid, x, y);
+    }
+  }
+};
+//-------classes-----------------
 const EAST = 0;
 const NORTH = 1;
 const WEST = 2;
 const SOUTH = 3;
+const randomNum = (num) => Math.floor(Math.random() * num);
 
 class Direction {
   constructor(initialHeading) {
@@ -19,6 +48,40 @@ class Direction {
 
   turnLeft() {
     this.heading = (this.heading + 1) % 4;
+  }
+}
+
+class Game {
+  constructor(snake, ghostSnake, food) {
+    this.snake = snake;
+    this.ghostSnake = ghostSnake;
+    this.currentFood = food;
+    this.previousFood = new Food(0, 0);
+  }
+  isPositionEqual() {
+    const snakePosition = this.snake.location
+    const [snakeColumnId, snakeRowId] = snakePosition[snakePosition.length - 1];
+    const [foodColumnId, foodRowId] = this.currentFood.position
+    return (snakeRowId === foodRowId && snakeColumnId === foodColumnId);
+  }
+  hasSnakeEatenFood() {
+    if (this.isPositionEqual()) {
+      this.previousFood = this.currentFood;
+      this.currentFood = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
+      console.log(this.currentFood);
+      return true
+    }
+    return false
+  }
+}
+
+class Food {
+  constructor(colId, rowId) {
+    this.colId = colId;
+    this.rowId = rowId;
+  }
+  get position() {
+    return [this.colId, this.rowId];
   }
 }
 
@@ -51,41 +114,44 @@ class Snake {
     this.positions.push([headX + deltaX, headY + deltaY]);
   }
 }
-
-const NUM_OF_COLS = 100;
-const NUM_OF_ROWS = 60;
-
-const GRID_ID = 'grid';
-
-const getGrid = () => document.getElementById(GRID_ID);
-const getCellId = (colId, rowId) => colId + '_' + rowId;
-
-const getCell = (colId, rowId) =>
-  document.getElementById(getCellId(colId, rowId));
-
-const createCell = function(grid, colId, rowId) {
-  const cell = document.createElement('div');
-  cell.className = 'cell';
-  cell.id = getCellId(colId, rowId);
-  grid.appendChild(cell);
+//------setup------------
+const attachEventListeners = snake => {
+  document.body.onkeydown = handleKeyPress.bind(null, snake);
+};
+const initSnake = () => {
+  const snakePosition = [
+    [40, 25],
+    [41, 25],
+    [42, 25]
+  ];
+  return new Snake(snakePosition, new Direction(EAST), 'snake');
 };
 
-const createGrids = function() {
-  const grid = getGrid();
-  for (let y = 0; y < NUM_OF_ROWS; y++) {
-    for (let x = 0; x < NUM_OF_COLS; x++) {
-      createCell(grid, x, y);
-    }
-  }
+const initGhostSnake = () => {
+  const ghostSnakePosition = [
+    [40, 30],
+    [41, 30],
+    [42, 30]
+  ];
+  return new Snake(ghostSnakePosition, new Direction(SOUTH), 'ghost');
 };
 
-const eraseTail = function(snake) {
+const setup = (game) => {
+  attachEventListeners(game.snake);
+  createGrids();
+
+  drawSnake(game.snake);
+  drawSnake(game.ghostSnake);
+  drawFood(game.currentFood);
+};
+//------visual ----------
+const eraseTail = function (snake) {
   let [colId, rowId] = snake.previousTail;
   const cell = getCell(colId, rowId);
   cell.classList.remove(snake.species);
 };
 
-const drawSnake = function(snake) {
+const drawSnake = function (snake) {
   snake.location.forEach(([colId, rowId]) => {
     const cell = getCell(colId, rowId);
     cell.classList.add(snake.species);
@@ -96,45 +162,54 @@ const handleKeyPress = snake => {
   snake.turnLeft();
 };
 
-const moveAndDrawSnake = function(snake) {
+const moveAndDrawSnake = function (snake) {
   snake.move();
   eraseTail(snake);
   drawSnake(snake);
 };
 
-const attachEventListeners = snake => {
-  document.body.onkeydown = handleKeyPress.bind(null, snake);
+const animateSnakes = (snake, ghostSnake) => {
+  moveAndDrawSnake(snake);
+  moveAndDrawSnake(ghostSnake);
 };
 
-const main = function() {
-  const snake = new Snake(
-    [
-      [40, 25],
-      [41, 25],
-      [42, 25]
-    ],
-    new Direction(EAST),
-    'snake'
-  );
+const randomlyTurnSnake = snake => {
+  let x = Math.random() * 100;
+  if (x > 50) {
+    snake.turnLeft();
+  }
+};
 
-  const ghostSnake = new Snake(
-    [
-      [40, 30],
-      [41, 30],
-      [42, 30]
-    ],
-    new Direction(SOUTH),
-    'ghost'
-  );
+const drawFood = function (food) {
+  let [colId, rowId] = food.position;
+  const cell = getCell(colId, rowId);
+  cell.classList.add('food');
+};
 
-  attachEventListeners(snake);
-  createGrids();
-  drawSnake(snake);
-  drawSnake(ghostSnake);
+const eraseFood = function (food) {
+  let [colId, rowId] = food.position;
+  const cell = getCell(colId, rowId);
+  cell.classList.remove('food');
+};
+
+const animate = function (game) {
+  moveAndDrawSnake(game.snake);
+  moveAndDrawSnake(game.ghostSnake);
+  if (game.hasSnakeEatenFood()) {
+    eraseFood(game.previousFood);
+    drawFood(game.currentFood)
+  }
+}
+
+const main = function () {
+  const snake = initSnake();
+  const ghostSnake = initGhostSnake();
+  const food = new Food(5, 5);
+  const game = new Game(snake, ghostSnake, food);
+  setup(game);
 
   setInterval(() => {
-    moveAndDrawSnake(snake);
-    moveAndDrawSnake(ghostSnake);
+    animate(game);
   }, 200);
 
   setInterval(() => {
