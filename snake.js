@@ -25,6 +25,38 @@ const createGrids = function () {
     }
   }
 };
+
+//------setup------------
+const attachEventListeners = snake => {
+  document.body.onkeydown = handleKeyPress.bind(null, snake);
+};
+
+const initSnake = () => {
+  const snakePosition = [
+    [40, 25],
+    [41, 25],
+    [42, 25]
+  ];
+  return new Snake(snakePosition, new Direction(EAST), 'snake');
+};
+
+const initGhostSnake = () => {
+  const ghostSnakePosition = [
+    [40, 30],
+    [41, 30],
+    [42, 30]
+  ];
+  return new Snake(ghostSnakePosition, new Direction(SOUTH), 'ghost');
+};
+
+const setup = (game) => {
+  attachEventListeners(game.snake);
+  createGrids();
+
+  drawSnake(game.snake);
+  drawSnake(game.ghostSnake);
+  drawFood(game.currentFood);
+};
 //-------classes-----------------
 const EAST = 0;
 const NORTH = 1;
@@ -57,6 +89,7 @@ class Game {
     this.ghostSnake = ghostSnake;
     this.currentFood = food;
     this.previousFood = new Food(0, 0);
+    this.score = 0;
   }
   isPositionEqual() {
     const snakePosition = this.snake.location
@@ -68,10 +101,16 @@ class Game {
     if (this.isPositionEqual()) {
       this.previousFood = this.currentFood;
       this.currentFood = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
-      console.log(this.currentFood);
       return true
     }
     return false
+  }
+  score() {
+    return this.score
+  }
+  updatePosition() {
+    this.score = this.score + 1;
+    this.snake.grow();
   }
 }
 
@@ -113,37 +152,12 @@ class Snake {
 
     this.positions.push([headX + deltaX, headY + deltaY]);
   }
+
+  grow() {
+    this.positions.unshift(this.previousTail)
+  }
 }
-//------setup------------
-const attachEventListeners = snake => {
-  document.body.onkeydown = handleKeyPress.bind(null, snake);
-};
-const initSnake = () => {
-  const snakePosition = [
-    [40, 25],
-    [41, 25],
-    [42, 25]
-  ];
-  return new Snake(snakePosition, new Direction(EAST), 'snake');
-};
 
-const initGhostSnake = () => {
-  const ghostSnakePosition = [
-    [40, 30],
-    [41, 30],
-    [42, 30]
-  ];
-  return new Snake(ghostSnakePosition, new Direction(SOUTH), 'ghost');
-};
-
-const setup = (game) => {
-  attachEventListeners(game.snake);
-  createGrids();
-
-  drawSnake(game.snake);
-  drawSnake(game.ghostSnake);
-  drawFood(game.currentFood);
-};
 //------visual ----------
 const eraseTail = function (snake) {
   let [colId, rowId] = snake.previousTail;
@@ -192,30 +206,28 @@ const eraseFood = function (food) {
   cell.classList.remove('food');
 };
 
-const animate = function (game) {
-  moveAndDrawSnake(game.snake);
-  moveAndDrawSnake(game.ghostSnake);
+const scoreBoard = function (score) {
+  document.getElementById('score').innerHTML = `SCORE : ${score}`;
+};
+
+const updateScreen = function (game) {
   if (game.hasSnakeEatenFood()) {
     eraseFood(game.previousFood);
-    drawFood(game.currentFood)
+    drawFood(game.currentFood);
+    game.updatePosition()
   }
-}
+  animateSnakes(game.snake, game.ghostSnake);
+  scoreBoard(game.score);
+};
 
 const main = function () {
   const snake = initSnake();
   const ghostSnake = initGhostSnake();
-  const food = new Food(5, 5);
+  const food = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
   const game = new Game(snake, ghostSnake, food);
   setup(game);
 
-  setInterval(() => {
-    animate(game);
-  }, 200);
+  setInterval(() => { updateScreen(game) }, 200);
 
-  setInterval(() => {
-    let x = Math.random() * 100;
-    if (x > 50) {
-      ghostSnake.turnLeft();
-    }
-  }, 500);
+  setInterval(() => { randomlyTurnSnake(ghostSnake) }, 500);
 };
