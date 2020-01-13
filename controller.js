@@ -1,4 +1,3 @@
-// --------create grid-----------------------
 const NUM_OF_COLS = 100;
 const NUM_OF_ROWS = 60;
 
@@ -26,9 +25,12 @@ const createGrids = function () {
   }
 };
 
-//------setup------------
-const attachEventListeners = snake => {
-  document.body.onkeydown = handleKeyPress.bind(null, snake);
+const handleKeyPress = game => {
+  game.turnSnake();
+};
+
+const attachEventListeners = game => {
+  document.body.onkeydown = handleKeyPress.bind(null, game);
 };
 
 const initSnake = () => {
@@ -50,16 +52,16 @@ const initGhostSnake = () => {
 };
 
 const setup = (game) => {
-  attachEventListeners(game.snake);
+  attachEventListeners(game);
   createGrids();
 
-  drawSnake(game.snake);
-  drawSnake(game.ghostSnake);
-  drawFood(game.currentFood);
+  const { snake, ghostSnake, currentFood } = { ...game }
+  drawSnake(snake);
+  drawSnake(ghostSnake);
+  drawFood(currentFood);
 };
-//-------classes-----------------
-const randomNum = (num) => Math.floor(Math.random() * num);
 
+const randomNum = (num) => Math.floor(Math.random() * num);
 
 const eraseTail = function (snake) {
   let [colId, rowId] = snake.previousTail;
@@ -74,27 +76,6 @@ const drawSnake = function (snake) {
   });
 };
 
-const handleKeyPress = snake => {
-  snake.turnLeft();
-};
-
-const moveAndDrawSnake = function (snake) {
-  snake.move();
-  eraseTail(snake);
-  drawSnake(snake);
-};
-
-const animateSnakes = (snake, ghostSnake) => {
-  moveAndDrawSnake(snake);
-  moveAndDrawSnake(ghostSnake);
-};
-
-const randomlyTurnSnake = snake => {
-  let x = Math.random() * 100;
-  if (x > 50) {
-    snake.turnLeft();
-  }
-};
 
 const drawFood = function (food) {
   let [colId, rowId] = food.position;
@@ -112,11 +93,24 @@ const scoreBoard = function (score) {
   document.getElementById('score').innerHTML = `SCORE : ${score}`;
 };
 
-const updateScreen = function (status) {
-  const { previousFood, currentFood, snake, ghostSnake, score } = { ...status };
+const randomlyTurnSnake = snake => {
+  let x = Math.random() * 100;
+  if (x > 50) {
+    snake.turnLeft();
+  }
+};
+
+const updateScreen = function (currentStatus) {
+  const { previousFood, currentFood, snake, ghostSnake, score } = { ...currentStatus };
+
   eraseFood(previousFood)
   drawFood(currentFood);
-  animateSnakes(snake, ghostSnake);
+
+  eraseTail(snake);
+  drawSnake(snake);
+  eraseTail(ghostSnake);
+  drawSnake(ghostSnake);
+
   scoreBoard(score);
 };
 

@@ -12,7 +12,7 @@ class Game {
     return (snakeRowId === foodRowId && snakeColumnId === foodColumnId);
   }
   score() {
-    return this.score
+    return this.score;
   }
   updatePosition() {
     if (this.isFoodEaten()) {
@@ -21,6 +21,8 @@ class Game {
       this.score = this.score + 1;
       this.snake.grow();
     }
+    this.snake.move();
+    this.ghostSnake.move();
   }
   getCurrentStatus() {
     return {
@@ -30,5 +32,8 @@ class Game {
       currentFood: this.currentFood,
       score: this.score
     }
+  }
+  turnSnake() {
+    this.snake.turnLeft();
   }
 };
