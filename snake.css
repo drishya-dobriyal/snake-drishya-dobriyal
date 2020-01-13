@@ -25,3 +25,9 @@ h1 {
 .food {
   background-color: blue;
 }
+#score {
+  height: 200x;
+  width: 300px;
+  margin: 20px auto;
+  background-color: blanchedalmond;
+}
