@@ -6,24 +6,29 @@ class Game {
     this.previousFood = new Food(0, 0);
     this.score = 0;
   }
-  isPositionEqual() {
+  isFoodEaten() {
     const [snakeColumnId, snakeRowId] = this.snake.getHeadPosition();
     const [foodColumnId, foodRowId] = this.currentFood.position;
     return (snakeRowId === foodRowId && snakeColumnId === foodColumnId);
-  }
-  hasSnakeEatenFood() {
-    if (this.isPositionEqual()) {
-      this.previousFood = this.currentFood;
-      this.currentFood = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
-      return true
-    }
-    return false
   }
   score() {
     return this.score
   }
   updatePosition() {
-    this.score = this.score + 1;
-    this.snake.grow();
+    if (this.isFoodEaten()) {
+      this.previousFood = this.currentFood;
+      this.currentFood = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
+      this.score = this.score + 1;
+      this.snake.grow();
+    }
   }
-}
+  getCurrentStatus() {
+    return {
+      snake: this.snake,
+      ghostSnake: this.ghostSnake,
+      previousFood: this.previousFood,
+      currentFood: this.currentFood,
+      score: this.score
+    }
+  }
+};

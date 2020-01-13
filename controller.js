@@ -58,7 +58,6 @@ const setup = (game) => {
   drawFood(game.currentFood);
 };
 //-------classes-----------------
-
 const randomNum = (num) => Math.floor(Math.random() * num);
 
 
@@ -91,7 +90,7 @@ const animateSnakes = (snake, ghostSnake) => {
 };
 
 const randomlyTurnSnake = snake => {
-  let x = randomNum * 100;
+  let x = Math.random() * 100;
   if (x > 50) {
     snake.turnLeft();
   }
@@ -113,14 +112,12 @@ const scoreBoard = function (score) {
   document.getElementById('score').innerHTML = `SCORE : ${score}`;
 };
 
-const updateScreen = function (game) {
-  if (game.hasSnakeEatenFood()) {
-    eraseFood(game.previousFood);
-    drawFood(game.currentFood);
-    game.updatePosition()
-  }
-  animateSnakes(game.snake, game.ghostSnake);
-  scoreBoard(game.score);
+const updateScreen = function (status) {
+  const { previousFood, currentFood, snake, ghostSnake, score } = { ...status };
+  eraseFood(previousFood)
+  drawFood(currentFood);
+  animateSnakes(snake, ghostSnake);
+  scoreBoard(score);
 };
 
 const main = function () {
@@ -130,7 +127,10 @@ const main = function () {
   const game = new Game(snake, ghostSnake, food);
   setup(game);
 
-  setInterval(() => { updateScreen(game) }, 200);
+  setInterval(() => {
+    game.updatePosition();
+    updateScreen(game.getCurrentStatus());
+  }, 200);
 
   setInterval(() => { randomlyTurnSnake(ghostSnake) }, 500);
 };
