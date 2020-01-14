@@ -55,10 +55,11 @@ const setup = (game) => {
   attachEventListeners(game);
   createGrids();
 
-  const { snake, ghostSnake, currentFood } = { ...game }
+  const { snake, ghostSnake, currentFood, score } = { ...game }
   drawSnake(snake);
   drawSnake(ghostSnake);
   drawFood(currentFood);
+  scoreBoard(score);
 };
 
 const randomNum = (num) => Math.floor(Math.random() * num);
@@ -99,7 +100,10 @@ const randomlyTurnSnake = snake => {
   }
 };
 
-const onGameComplete = score => document.body.innerText = `total score ${score}`;
+const onGameComplete = score => {
+  document.body.innerHTML =
+    `<p class='finalDisplay'>Game Over <br><br>total score ${score}<p>`;
+}
 
 const updateScreen = function (currentStatus) {
   if (currentStatus.playerOut) {
@@ -132,7 +136,8 @@ const main = function () {
   const snake = initSnake();
   const ghostSnake = initGhostSnake();
   const food = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
-  const game = new Game(snake, ghostSnake, food);
+  const scoreCard = new ScoreCard();
+  const game = new Game(snake, ghostSnake, food, scoreCard);
   setup(game);
 
   setInterval(() => {

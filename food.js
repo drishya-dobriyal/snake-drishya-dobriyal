@@ -6,4 +6,4 @@ class Food {
   get position() {
     return [this.colId, this.rowId];
   }
-}
+};

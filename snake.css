@@ -31,3 +31,12 @@ h1 {
   margin: 20px auto;
   background-color: blanchedalmond;
 }
+
+.finalDisplay {
+  text-align: center;
+  font-size: 100px;
+  margin: 0 auto;
+  height: 600px;
+  width: 1200px;
+  background-color: bisque;
+}

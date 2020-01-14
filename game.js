@@ -1,10 +1,11 @@
 class Game {
-  constructor(snake, ghostSnake, food) {
+  constructor(snake, ghostSnake, food, scoreCard) {
     this.snake = snake;
     this.ghostSnake = ghostSnake;
     this.currentFood = food;
     this.previousFood = new Food(0, 0);
     this.score = 0;
+    this.scoreCard = scoreCard;
   }
 
   isFoodEaten() {
@@ -20,7 +21,7 @@ class Game {
   afterFoodEaten() {
     this.previousFood = this.currentFood;
     this.currentFood = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
-    this.score = this.score + 1;
+    this.scoreCard.updatePoints();
     this.snake.grow();
   }
 
@@ -41,7 +42,7 @@ class Game {
       ghostSnake: this.ghostSnake,
       previousFood: this.previousFood,
       currentFood: this.currentFood,
-      score: this.score
+      score: this.scoreCard.getPoints()
     }
   }
 
