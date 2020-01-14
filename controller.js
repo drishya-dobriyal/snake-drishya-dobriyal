@@ -105,7 +105,6 @@ const updateScreen = function (currentStatus) {
   if (currentStatus.playerOut) {
     return onGameComplete(currentStatus.totalScore);
   }
-
   const { previousFood, currentFood, snake, ghostSnake, score } = { ...currentStatus };
 
   eraseFood(previousFood)
@@ -119,6 +118,16 @@ const updateScreen = function (currentStatus) {
   scoreBoard(score);
 };
 
+const update = function (game) {
+  game.updatePosition();
+  if (game.isPlayerOut(game.snake)) {
+    const currentStatus = { playerOut: true, totalScore: game.score }
+    updateScreen(currentStatus);
+    return;
+  }
+  updateScreen(game.getCurrentStatus());
+}
+
 const main = function () {
   const snake = initSnake();
   const ghostSnake = initGhostSnake();
@@ -127,12 +136,7 @@ const main = function () {
   setup(game);
 
   setInterval(() => {
-    game.updatePosition();
-    if (game.isPlayerOut()) {
-      const currentStatus = { playerOut: true, totalScore: game.score }
-      updateScreen(currentStatus);
-    }
-    updateScreen(game.getCurrentStatus());
+    update(game);
   }, 200);
 
   setInterval(() => { randomlyTurnSnake(ghostSnake) }, 500);

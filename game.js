@@ -6,24 +6,35 @@ class Game {
     this.previousFood = new Food(0, 0);
     this.score = 0;
   }
+
   isFoodEaten() {
     const [snakeColumnId, snakeRowId] = this.snake.getHeadPosition();
     const [foodColumnId, foodRowId] = this.currentFood.position;
     return (snakeRowId === foodRowId && snakeColumnId === foodColumnId);
   }
+
   score() {
     return this.score;
   }
+
+  afterFoodEaten() {
+    this.previousFood = this.currentFood;
+    this.currentFood = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
+    this.score = this.score + 1;
+    this.snake.grow();
+  }
+
   updatePosition() {
     if (this.isFoodEaten()) {
-      this.previousFood = this.currentFood;
-      this.currentFood = new Food(randomNum(NUM_OF_COLS), randomNum(NUM_OF_ROWS));
-      this.score = this.score + 1;
-      this.snake.grow();
+      this.afterFoodEaten();
+    }
+    if (!this.isSnakeInRange(this.ghostSnake)) {
+      this.ghostSnake.turnLeft();
     }
     this.snake.move();
     this.ghostSnake.move();
   }
+
   getCurrentStatus() {
     return {
       snake: this.snake,
@@ -33,16 +44,19 @@ class Game {
       score: this.score
     }
   }
+
   turnSnake() {
     this.snake.turnLeft();
   }
-  isSnakeInRange() {
-    const [snakeColumnId, snakeRowId] = this.snake.getHeadPosition();
-    const isColumnInRange = 0 <= snakeColumnId && 99 >= snakeColumnId;
-    const isRowInRange = 0 <= snakeRowId && 59 >= snakeRowId;
+
+  isSnakeInRange(snake) {
+    const [snakeColumnId, snakeRowId] = snake.getHeadPosition();
+    const isColumnInRange = 99 >= snakeColumnId && 0 <= snakeColumnId;
+    const isRowInRange = 59 >= snakeRowId && 0 <= snakeRowId;
     return isColumnInRange && isRowInRange;
   }
+
   isPlayerOut() {
-    return !this.isSnakeInRange() || this.snake.hasTouchItself();
+    return !this.isSnakeInRange(this.snake) || this.snake.hasTouchItself();
   }
 };
