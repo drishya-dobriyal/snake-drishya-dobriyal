@@ -99,7 +99,13 @@ const randomlyTurnSnake = snake => {
   }
 };
 
+const onGameComplete = score => document.body.innerText = `total score ${score}`;
+
 const updateScreen = function (currentStatus) {
+  if (currentStatus.playerOut) {
+    return onGameComplete(currentStatus.totalScore);
+  }
+
   const { previousFood, currentFood, snake, ghostSnake, score } = { ...currentStatus };
 
   eraseFood(previousFood)
@@ -123,7 +129,8 @@ const main = function () {
   setInterval(() => {
     game.updatePosition();
     if (game.isPlayerOut()) {
-      document.body.innerText = `total score ${game.score}`
+      const currentStatus = { playerOut: true, totalScore: game.score }
+      updateScreen(currentStatus);
     }
     updateScreen(game.getCurrentStatus());
   }, 200);
