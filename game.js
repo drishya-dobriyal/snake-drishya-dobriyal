@@ -36,4 +36,13 @@ class Game {
   turnSnake() {
     this.snake.turnLeft();
   }
+  isSnakeInRange() {
+    const [snakeColumnId, snakeRowId] = this.snake.getHeadPosition();
+    const isColumnInRange = 0 <= snakeColumnId && 99 >= snakeColumnId;
+    const isRowInRange = 0 <= snakeRowId && 59 >= snakeRowId;
+    return isColumnInRange && isRowInRange;
+  }
+  isPlayerOut() {
+    return !this.isSnakeInRange() || this.snake.hasTouchItself();
+  }
 };

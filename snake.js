@@ -27,6 +27,11 @@ class Snake {
   }
   getHeadPosition() {
     const [snakeColumnId, snakeRowId] = this.positions[this.positions.length - 1];
-    return [snakeColumnId, snakeRowId]
+    return [snakeColumnId, snakeRowId];
+  }
+  hasTouchItself() {
+    const [snakeColumnId, snakeRowId] = this.getHeadPosition();
+    const snakeBody = this.positions.slice(0, -1);
+    return snakeBody.some(([colId, rowId]) => colId == snakeColumnId && rowId == snakeRowId)
   }
 }

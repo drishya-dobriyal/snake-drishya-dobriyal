@@ -76,7 +76,6 @@ const drawSnake = function (snake) {
   });
 };
 
-
 const drawFood = function (food) {
   let [colId, rowId] = food.position;
   const cell = getCell(colId, rowId);
@@ -123,6 +122,9 @@ const main = function () {
 
   setInterval(() => {
     game.updatePosition();
+    if (game.isPlayerOut()) {
+      document.body.innerText = `total score ${game.score}`
+    }
     updateScreen(game.getCurrentStatus());
   }, 200);
 
