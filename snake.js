@@ -35,6 +35,10 @@ class Snake {
     return [snakeColumnId, snakeRowId];
   }
 
+  getTailPosition() {
+    return this.previousTail;
+  }
+
   hasTouchItself() {
     const [snakeColumnId, snakeRowId] = this.getHeadPosition();
     const snakeBody = this.positions.slice(0, -1);

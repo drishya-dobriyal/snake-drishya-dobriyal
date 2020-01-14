@@ -38,11 +38,15 @@ class Game {
 
   getCurrentStatus() {
     return {
-      snake: this.snake,
-      ghostSnake: this.ghostSnake,
-      previousFood: this.previousFood,
-      currentFood: this.currentFood,
-      score: this.scoreCard.getPoints()
+      previousFoodPosition: this.previousFood.position,
+      currentFoodPosition: this.currentFood.position,
+      snakeTail: this.snake.getTailPosition(),
+      ghostSnakeTail: this.ghostSnake.getTailPosition(),
+      snakeSpecies: this.snake.species,
+      ghostSnakeSpecies: this.ghostSnake.species,
+      score: this.scoreCard.getPoints(),
+      snakePosition: this.snake.location,
+      ghostSnakePosition: this.ghostSnake.location
     }
   }
 
@@ -59,5 +63,12 @@ class Game {
 
   isPlayerOut() {
     return !this.isSnakeInRange(this.snake) || this.snake.hasTouchItself();
+  }
+
+  randomlyTurnSnake(snake) {
+    let x = Math.random() * 100;
+    if (x > 50) {
+      snake.turnLeft();
+    }
   }
 };
