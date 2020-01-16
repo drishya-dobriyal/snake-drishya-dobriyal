@@ -37,16 +37,26 @@ class Game {
   }
 
   getCurrentStatus() {
+    const playerSnake = {
+      tail: this.snake.getTailPosition(),
+      species: this.snake.species,
+      position: this.snake.location,
+    }
+    const gameSnake = {
+      tail: this.ghostSnake.getTailPosition(),
+      species: this.ghostSnake.species,
+      position: this.ghostSnake.location
+    }
+    const foodData = {
+      previousPosition: this.previousFood.position,
+      currentPosition: this.currentFood.position,
+    }
+    const score = this.scoreCard.getPoints();
     return {
-      previousFoodPosition: this.previousFood.position,
-      currentFoodPosition: this.currentFood.position,
-      snakeTail: this.snake.getTailPosition(),
-      ghostSnakeTail: this.ghostSnake.getTailPosition(),
-      snakeSpecies: this.snake.species,
-      ghostSnakeSpecies: this.ghostSnake.species,
-      score: this.scoreCard.getPoints(),
-      snakePosition: this.snake.location,
-      ghostSnakePosition: this.ghostSnake.location
+      playerSnake,
+      gameSnake,
+      foodData,
+      score
     }
   }
 

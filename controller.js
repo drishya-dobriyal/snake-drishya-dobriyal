@@ -103,23 +103,18 @@ const updateScreen = function (currentStatus) {
     return onGameComplete(currentStatus.totalScore);
   }
   const {
-    previousFoodPosition,
-    currentFoodPosition,
-    snakeTail,
-    ghostSnakeTail,
-    snakeSpecies,
-    ghostSnakeSpecies,
-    score,
-    snakePosition,
-    ghostSnakePosition
-  } = { ...currentStatus };
-  eraseFood(previousFoodPosition)
-  drawFood(currentFoodPosition);
+    playerSnake,
+    gameSnake,
+    foodData,
+    score
+  } = { ...currentStatus }
+  eraseFood(foodData.previousPosition)
+  drawFood(foodData.currentPosition);
 
-  eraseTail(snakeTail, snakeSpecies);
-  drawSnake(snakePosition, snakeSpecies);
-  eraseTail(ghostSnakeTail, ghostSnakeSpecies);
-  drawSnake(ghostSnakePosition, ghostSnakeSpecies);
+  eraseTail(playerSnake.tail, playerSnake.species);
+  drawSnake(playerSnake.position, playerSnake.species);
+  eraseTail(gameSnake.tail, gameSnake.species);
+  drawSnake(gameSnake.position, gameSnake.species);
 
   scoreBoard(score);
 };
