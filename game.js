@@ -60,8 +60,12 @@ class Game {
     }
   }
 
-  turnSnake() {
+  turnLeft() {
     this.snake.turnLeft();
+  }
+
+  turnRight() {
+    this.snake.turnRight();
   }
 
   isSnakeInRange(snake) {

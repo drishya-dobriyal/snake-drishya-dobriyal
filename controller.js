@@ -26,7 +26,12 @@ const createGrids = function () {
 };
 
 const handleKeyPress = game => {
-  game.turnSnake();
+  if (event.keyCode == 37) {
+    game.turnLeft();
+  }
+  if (event.keyCode == 39) {
+    game.turnRight()
+  }
 };
 
 const attachEventListeners = game => {
