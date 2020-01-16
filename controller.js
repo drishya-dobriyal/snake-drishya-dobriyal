@@ -2,6 +2,8 @@ const NUM_OF_COLS = 100;
 const NUM_OF_ROWS = 60;
 
 const GRID_ID = 'grid';
+const SCORE = 'score';
+const FINALDISPLAY = 'finalDisplay';
 
 const getGrid = () => document.getElementById(GRID_ID);
 const getCellId = (colId, rowId) => colId + '_' + rowId;
@@ -124,12 +126,12 @@ const updateScreen = function (currentStatus) {
   scoreBoard(score);
 };
 
-const update = function (game, onGameComplete) {
+const update = function (game, stopFra) {
   game.updatePosition();
   if (game.isPlayerOut(game.snake)) {
     const currentStatus = { playerOut: true, totalScore: game.score }
     updateScreen(currentStatus);
-    clearInterval(onGameComplete);
+    clearInterval(stopFrames);
     return;
   }
   updateScreen(game.getCurrentStatus());
@@ -143,11 +145,11 @@ const main = function () {
   const game = new Game(snake, ghostSnake, food, scoreCard);
   setup(game);
 
-  const onGameComplete = setInterval(() => {
-    update(game, onGameComplete);
+  const stopFrames = setInterval(() => {
+    update(game, stopFrames);
   }, 200);
 
-  setInterval(() => { game.randomlyTurnSnake(game.ghostSnake) }, 500);
+  // setInterval(() => { game.randomlyTurnSnake(game.ghostSnake) }, 500);
 };
 
 window.onload = main;
