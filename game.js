@@ -37,7 +37,7 @@ class Game {
       this.createNewFood();
     }
     if (!this.isSnakeInRange(this.ghostSnake)) {
-      this.ghostSnake.turnLeft();
+      this.snake.turnLeft();
     }
     this.snake.move();
     this.ghostSnake.move();
@@ -68,11 +68,11 @@ class Game {
   }
 
   turnLeft() {
-    this.ghostSnake.turnLeft();
+    this.snake.turnLeft();
   }
 
   turnRight() {
-    this.ghostSnake.turnRight();
+    this.snake.turnRight();
   }
 
   isSnakeInRange(snake) {

@@ -126,12 +126,12 @@ const updateScreen = function (currentStatus) {
   scoreBoard(score);
 };
 
-const update = function (game, stopFra) {
+const update = function (game, timer) {
   game.updatePosition();
   if (game.isPlayerOut(game.snake)) {
     const currentStatus = { playerOut: true, totalScore: game.score }
     updateScreen(currentStatus);
-    clearInterval(stopFrames);
+    clearInterval(timer);
     return;
   }
   updateScreen(game.getCurrentStatus());
@@ -145,11 +145,11 @@ const main = function () {
   const game = new Game(snake, ghostSnake, food, scoreCard);
   setup(game);
 
-  const stopFrames = setInterval(() => {
-    update(game, stopFrames);
+  const timer = setInterval(() => {
+    update(game, timer);
   }, 200);
 
-  // setInterval(() => { game.randomlyTurnSnake(game.ghostSnake) }, 500);
+  setInterval(() => { game.randomlyTurnSnake(game.ghostSnake) }, 500);
 };
 
 window.onload = main;
